@@ -18,6 +18,7 @@ PS3BT PS3(&Btd); // This will just create the instance
 
 bool printTemperature, printAngle;
 
+//******************Locomotion*********************
 //Direction pins
 int w1 = 47;
 int w2 = 45;
@@ -29,6 +30,15 @@ int w1PWM = 2;
 int w2PWM = 3;
 int w3PWM = 7;
 int w4PWM = 4;
+//**************************************************
+
+//**************Gripping Arrow from rack*********************
+int arrowGripperEnable = 8;
+int arrowGripperDirection1 = 40;
+int arrowGripperDirection2 = 41;
+boolean arrowGripperPressed = false;
+long arrowGripperCloseDelay = 500;
+//************************************************************
 
 double DAMP_FACTOR = 2;
 
@@ -63,8 +73,8 @@ void drive_motors(int xl, int yl, int xr, int yr)
 	f1 = 1.414 * xr + 1.414 * yr;
 	f2 = -1.414 * xr + 1.414 * yr;
 
-  f1=f1/DAMP_FACTOR;
-  f2=f2/DAMP_FACTOR;
+	f1 = f1 / DAMP_FACTOR;
+	f2 = f2 / DAMP_FACTOR;
 
 	if (f1 > 0)
 	{
@@ -88,40 +98,43 @@ void drive_motors(int xl, int yl, int xr, int yr)
 		wheel3backward();
 	}
 
-  f1 = abs(f1);
-  f2 = abs(f2);
+	f1 = abs(f1);
+	f2 = abs(f2);
 
- if(f1>30){
-    analogWrite(w2PWM, f1);
-    analogWrite(w4PWM, f1);
-  }
-  else{
-    analogWrite(w2PWM, 0);
-    analogWrite(w4PWM, 0);
-  }
+	if (f1 > 30)
+	{
+		analogWrite(w2PWM, f1);
+		analogWrite(w4PWM, f1);
+	}
+	else
+	{
+		analogWrite(w2PWM, 0);
+		analogWrite(w4PWM, 0);
+	}
 
-  if(f2>30){
-    analogWrite(w1PWM, f2);
-    analogWrite(w3PWM, f2);
-  }
-  else{
-    analogWrite(w1PWM, 0);
-    analogWrite(w3PWM, 0);
+	if (f2 > 30)
+	{
+		analogWrite(w1PWM, f2);
+		analogWrite(w3PWM, f2);
+	}
+	else
+	{
+		analogWrite(w1PWM, 0);
+		analogWrite(w3PWM, 0);
+	}
 
-  }
-
-  if (xl < 100) //100 is a minimum limit value for xl to activate rotation
-  {
-    xl = 100 - xl;
-    map(xl, 0, 100, 0, 255);
-    rotateLeft(xl);
-  }
-  if (xl > 155)
-  {
-    xl = xl - 155;
-    map(xl, 0, 100, 0, 255);
-    rotateRight(xl);
-  }
+	if (xl < 100) //100 is a minimum limit value for xl to activate rotation
+	{
+		xl = 100 - xl;
+		map(xl, 0, 100, 0, 255);
+		rotateLeft(xl);
+	}
+	if (xl > 155)
+	{
+		xl = xl - 155;
+		map(xl, 0, 100, 0, 255);
+		rotateRight(xl);
+	}
 }
 
 //	2--1
@@ -167,7 +180,6 @@ void wheel4backward()
 {
 	digitalWrite(w4, HIGH); //HIGH-LOW is positive direction & LOW-HIGH is negative direction
 }
-
 
 void rotateLeft(int mag)
 {
@@ -283,6 +295,9 @@ void loop()
 			if (PS3.getButtonClick(LEFT))
 			{
 				Serial.print(F("\r\nLeft"));
+
+				//Here the arrow grip commond is given, pressing this again will do the opposite
+				gripArrowsFromRack();
 				if (PS3.PS3Connected)
 				{
 					PS3.setLedOff();
@@ -374,3 +389,42 @@ void loop()
   }
 #endif
 }
+
+//**************Gripping Arrow from rack*********************
+
+void arrowGripperClose()
+{
+	digitalWrite(arrowGripperDirection1, HIGH);
+	digitalWrite(arrowGripperDirection2, LOW);
+	delay(arrowGripperCloseDelay);
+	arrowGripperStop();
+}
+
+void arrowGripperOpen()
+{
+	digitalWrite(arrowGripperDirection1, LOW);
+	digitalWrite(arrowGripperDirection2, HIGH);
+	delay(arrowGripperCloseDelay);
+	arrowGripperStop();
+}
+
+void arrowGripperStop()
+{
+	digitalWrite(arrowGripperDirection1, LOW);
+	digitalWrite(arrowGripperDirection2, LOW);
+}
+
+void gripArrowsFromRack()
+{
+	arrowGripperPressed = !arrowGripperPressed;
+	if (arrowGripperPressed = true)
+	{
+		arrowGripperClose();
+	}
+	else
+	{
+		arrowGripperOpen();
+	}
+}
+
+//************************************************************
