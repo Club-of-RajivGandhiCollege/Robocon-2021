@@ -1,6 +1,6 @@
 # Robocon-2021
 
-#Defensive Robot
+##Defensive Robot
 
 To use custom library for universal gripper which includes two servos and a vacuum pump.
 
@@ -23,7 +23,7 @@ Step 2. Instantiate the class UGripper as,
         UGripper instance_name(pin for shouder servo, pin for elbow servo, pin for vacuum);
 ```        
 
-#methods
+##methods
 
 Note: 1)The methods must be called as instance_name.method_name();
       2) These methods do not recieve any arguments.
