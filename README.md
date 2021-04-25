@@ -13,7 +13,7 @@ Note: Most of the constants are declared inside universal_gripper.cpp. So in cas
       
 *Note: universal_gripper.h, universal_gripper.cpp and actual code file must be in same folder.*
       
-      if universal_gripper.h, universal_gripper.cpp files are in default lib folder of arduino then use,
+if universal_gripper.h, universal_gripper.cpp files are in default lib folder of arduino then use,
  ```
       #include<universal_gripper.h>
  ```     
